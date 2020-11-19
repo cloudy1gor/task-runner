@@ -1,0 +1,76 @@
+/* Set core html defaults */
+html {
+  word-break: normal;
+}
+
+/* Set core body defaults */
+body {
+  min-height: 100vh;
+  text-rendering: optimizeSpeed;
+  scroll-behavior: smooth;
+}
+
+/* Remove list styles on ul, ol elements with a class attribute */
+ul,
+ol {
+  list-style: none;
+}
+
+/* A elements default styles */
+a {
+  vertical-align: baseline;
+  margin: 0;
+  outline: 0;
+  padding: 0;
+  text-decoration: none;
+  background: transparent;
+  text-decoration-skip-ink: none;
+}
+
+/* Make images easier to work with */
+img {
+  display: block;
+  max-width: 100%;
+}
+
+/* Set default styles for inputs and buttons */
+input,
+button,
+textarea,
+select {
+  vertical-align: middle;
+  margin: 0;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  background: transparent;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+select::-ms-expand {
+  display: none;
+}
+select::-ms-value {
+  color: currentColor;
+}
+::-webkit-file-upload-button {
+  -webkit-appearance: button;
+  font: inherit;
+  color: inherit;
+}
+:focus {
+  outline: transparent;
+}
+
+/* Remove table border styles */
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/* Delete basic styles */
+del {
+  text-decoration: line-through;
+}

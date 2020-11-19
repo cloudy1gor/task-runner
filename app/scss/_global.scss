@@ -1,0 +1,31 @@
+// Global styles
+
+html {
+  box-sizing: border-box;
+  font-size: 16px;
+}
+
+*,
+*::after,
+*::before {
+  box-sizing: inherit;
+}
+
+body {
+  color: $default-color;
+  @extend %dms-regular;
+}
+
+.main {
+  min-height: calc(100vh - 450px);
+}
+
+.wrapper {
+  overflow-x: hidden;
+}
+
+.container {
+  margin: 0 auto;
+  padding: 0 15px;
+  max-width: 1800px;
+}
