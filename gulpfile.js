@@ -37,22 +37,26 @@ function browsersync() {
 }
 
 function html() {
-  return src(["./app/html/pages/*.html", "!./app/html/components/_*.html"])
-    .pipe(
-      fileinclude({
-        prefix: "@@",
-        basepath: "./app",
-      })
-    )
-    .pipe(htmlmin({ collapseWhitespace: false }))
-    .pipe(dest("./app"))
-    .pipe(browserSync.stream());
+  return (
+    src(["./app/html/pages/*.html", "!./app/html/components/_*.html"])
+      .pipe(
+        fileinclude({
+          prefix: "@@",
+          basepath: "./app",
+        })
+      )
+      // .pipe(htmlmin({ collapseWhitespace: false }))
+      .pipe(dest("./app"))
+      .pipe(browserSync.stream())
+  );
 }
 
 function scripts() {
   return src([
     "node_modules/jquery/dist/jquery.min.js",
     "node_modules/slick-carousel/slick/slick.min.js",
+    "node_modules/mixitup/dist/mixitup.min.js",
+    "node_modules/@fancyapps/fancybox/dist/jquery.fancybox.js",
     "!app/js/main.min.js",
     "app/js/main.js",
   ])
@@ -65,7 +69,6 @@ function scripts() {
 function styles() {
   return src([
     "node_modules/normalize.css/normalize.css",
-    "node_modules/slick-carousel/slick/slick.css",
     "!app/scss/_*.scss",
     "app/scss/*.scss",
   ])

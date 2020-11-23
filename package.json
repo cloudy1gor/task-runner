@@ -10,6 +10,7 @@
   "author": "none",
   "license": "ISC",
   "devDependencies": {
+    "@fancyapps/fancybox": "^3.5.7",
     "browser-sync": "^2.26.13",
     "del": "^6.0.0",
     "gulp": "^4.0.2",
@@ -26,6 +27,7 @@
     "imagemin-jpeg-recompress": "^7.0.0",
     "imagemin-pngquant": "^9.0.1",
     "jquery": "^3.5.1",
+    "mixitup": "^3.3.1",
     "normalize.css": "^8.0.1",
     "slick-carousel": "^1.8.1",
     "stylelint": "^13.7.2",
