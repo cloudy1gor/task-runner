@@ -1,9 +1,8 @@
 @import "vars";
+@import "mixin";
 @import "fonts";
 @import "reset";
-@import "global";
 @import "libs";
-
+@import "global";
 @import "components/header";
-
 @import "components/footer";

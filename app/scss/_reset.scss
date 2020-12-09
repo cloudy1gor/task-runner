@@ -1,39 +1,68 @@
-/* Set core html defaults */
+html,
+body,
+div,
+span,
+h1,
+h2,
+h3,
+h4,
+p,
+blockquote,
+address,
+img,
+small,
+strong,
+sub,
+sup,
+b,
+i,
+ol,
+ul,
+li,
+form,
+label,
+article,
+aside,
+footer,
+header,
+nav,
+section,
+time,
+audio,
+video {
+  margin: 0;
+  outline: 0;
+  border: 0;
+  padding: 0;
+  background: transparent;
+}
+
 html {
   word-break: normal;
 }
 
-/* Set core body defaults */
 body {
   min-height: 100vh;
   text-rendering: optimizeSpeed;
   scroll-behavior: smooth;
 }
 
-/* Remove list styles on ul, ol elements with a class attribute */
-ul,
+ul[class],
 ol {
   list-style: none;
 }
 
-/* A elements default styles */
 a {
-  vertical-align: baseline;
-  margin: 0;
   outline: 0;
-  padding: 0;
   text-decoration: none;
   background: transparent;
   text-decoration-skip-ink: none;
 }
 
-/* Make images easier to work with */
-img {
-  display: block;
-  max-width: 100%;
+address {
+  font-style: normal;
 }
 
-/* Set default styles for inputs and buttons */
 input,
 button,
 textarea,
@@ -46,31 +75,13 @@ select {
   font: inherit;
   color: inherit;
   background: transparent;
-  -webkit-appearance: none;
-  -moz-appearance: none;
 }
-select::-ms-expand {
-  display: none;
+
+img {
+  display: block;
+  max-width: 100%;
 }
-select::-ms-value {
-  color: currentColor;
-}
-::-webkit-file-upload-button {
-  -webkit-appearance: button;
-  font: inherit;
-  color: inherit;
-}
+
 :focus {
-  outline: transparent;
-}
-
-/* Remove table border styles */
-table {
-  border-collapse: collapse;
-  border-spacing: 0;
-}
-
-/* Delete basic styles */
-del {
-  text-decoration: line-through;
+  outline: none;
 }

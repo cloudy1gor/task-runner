@@ -15,15 +15,17 @@
 
 <body>
   <div class="wrapper">
-    @@include("html/components/_header.html")
+    @@loop('html/components/_header.html',[{
+    "title":"header title"
+    }])
 
     <main class="main">
 
-      <img src="../../images/src/img.jpg" alt="img">
+
 
     </main>
 
-    @@include("html/components/_footer.html")
+    @@include('html/components/_footer.html')
   </div>
   <script src="js/main.min.js"></script>
 </body>

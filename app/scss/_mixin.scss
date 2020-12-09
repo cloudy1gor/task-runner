@@ -1,0 +1,56 @@
+@mixin pseudo($display: block, $pos: absolute, $content: "") {
+  content: $content;
+  position: $pos;
+  display: $display;
+}
+
+@mixin bg($bg-repeat: no-repeat, $bg-size: cover, $bg-position: center center) {
+  background-position: $bg-position;
+  background-size: $bg-size;
+  background-repeat: $bg-repeat;
+}
+
+@mixin txt($lc: 3) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -moz-box;
+  -moz-box-orient: vertical;
+  display: -webkit-box;
+  -webkit-line-clamp: $lc;
+  -webkit-box-orient: vertical;
+  line-clamp: $lc;
+  box-orient: vertical;
+}
+
+$breakpoints: (
+  "400": 400px,
+  "480": 480px,
+  "560": 560px,
+  "640": 640px,
+  "768": 768px,
+  "1024": 1024px,
+  "1248": 1248px,
+  "1920": 1920px,
+);
+
+@mixin mq($width, $type: max) {
+  @if map_has_key($breakpoints, $width) {
+    $width: map_get($breakpoints, $width);
+
+    @if $type==max {
+      $width: $width - 1px;
+    }
+
+    @media only screen and (#{$type}-width: $width) {
+      @content;
+    }
+  }
+}
+
+@function max($numbers...) {
+  @return m#{a}x(#{$numbers});
+}
+
+@function min($numbers...) {
+  @return m#{i}n(#{$numbers});
+}

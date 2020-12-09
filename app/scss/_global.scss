@@ -16,16 +16,18 @@ body {
   @extend %dms-regular;
 }
 
-.main {
-  min-height: calc(100vh - 450px);
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
 }
 
-.wrapper {
-  overflow-x: hidden;
+.main {
+  flex-grow: 1;
 }
 
 .container {
   margin: 0 auto;
   padding: 0 15px;
-  max-width: 1800px;
+  max-width: 1230px;
 }

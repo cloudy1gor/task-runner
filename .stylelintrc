@@ -37,10 +37,6 @@
       },
       {
         "type": "rule",
-        "selector": "&:hover"
-      },
-      {
-        "type": "rule",
         "selector": "&:active"
       },
       {
@@ -70,6 +66,10 @@
       {
         "type": "rule",
         "selector": "&--.+"
+      },
+      {
+        "type": "rule",
+        "selector": ".* &"
       },
       {
         "type": "at-rule",
@@ -451,10 +451,8 @@
         "unspecified": "bottomAlphabetical"
       }
     ],
-    "at-rule-blacklist": [
-      "all rules"
-    ],
-    "at-rule-empty-line-before": never,
+    "at-rule-empty-line-before":
+      "never",
     "at-rule-name-case": "lower",
     "at-rule-name-newline-after": null,
     "at-rule-name-space-after": "always-single-line",
@@ -535,7 +533,8 @@
     "declaration-colon-newline-after": "always-multi-line",
     "declaration-colon-space-after": "always-single-line",
     "declaration-colon-space-before": "never",
-    "declaration-empty-line-before": never,
+    "declaration-empty-line-before":
+      "never",
     "declaration-no-important": [
       true,
       {
@@ -612,7 +611,17 @@
     ],
     "property-no-vendor-prefix": true,
     "property-whitelist": null,
-    "rule-empty-line-before": null,
+    "rule-empty-line-before": [
+      "always-multi-line",
+      {
+        "except": [
+          "first-nested"
+        ],
+        "ignore": [
+          "after-comment"
+        ]
+      }
+    ],
     "selector-attribute-brackets-space-inside": "never",
     "selector-attribute-operator-blacklist": null,
     "selector-attribute-operator-space-after": "never",
@@ -685,6 +694,7 @@
     "scss/at-if-closing-brace-space-after": "always-intermediate",
     "scss/at-import-no-partial-leading-underscore": true,
     "scss/at-import-partial-extension-blacklist": null,
+    "scss/at-import-partial-extension-whitelist": null,
     "scss/at-mixin-argumentless-call-parentheses": "always",
     "scss/at-mixin-parentheses-space-before": "never",
     "scss/at-mixin-pattern": null,
