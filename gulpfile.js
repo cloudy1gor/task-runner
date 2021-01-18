@@ -17,7 +17,7 @@ const fileinclude = require("gulp-file-include");
 const htmlmin = require("gulp-htmlmin");
 const rename = require("gulp-rename");
 const svgmin = require("gulp-svgmin");
-const svgstore = require("gulp-md-svgstore");
+const svgsprite = require("gulp-svg-sprite");
 
 function browsersync() {
   browserSync.init({
@@ -51,6 +51,7 @@ function html() {
 function scripts() {
   return src([
     "node_modules/jquery/dist/jquery.js",
+    "node_modules/aos/dist/aos.js",
     "!app/js/main.min.js",
     "app/js/main.js",
   ])
@@ -142,10 +143,12 @@ function svg2sprite() {
       })
     )
     .pipe(
-      svgstore({
-        outputFilename: "sprite.svg",
-        keepIds: true,
-        inlineSvg: true,
+      svgsprite({
+        mode: {
+          stack: {
+            sprite: "../sprite.svg",
+          },
+        },
       })
     )
     .pipe(dest("app/images/src"));
