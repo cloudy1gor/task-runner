@@ -3,18 +3,18 @@ const { src, dest, parallel, series, watch } = require("gulp");
 
 const browserSync = require("browser-sync").create();
 const concat = require("gulp-concat");
+const babel = require("gulp-babel");
 const uglify = require("gulp-uglify-es").default;
 const sass = require("gulp-sass");
 const autoprefixer = require("gulp-autoprefixer");
 const cleancss = require("gulp-clean-css");
+const size = require("gulp-size");
 const imagemin = require("gulp-imagemin");
 const recompress = require("imagemin-jpeg-recompress");
 const pngquant = require("imagemin-pngquant");
-const newer = require("gulp-newer");
 const del = require("del");
 const gcmq = require("gulp-group-css-media-queries");
 const fileinclude = require("gulp-file-include");
-const htmlmin = require("gulp-htmlmin");
 const rename = require("gulp-rename");
 const svgmin = require("gulp-svgmin");
 const svgsprite = require("gulp-svg-sprite");
@@ -40,8 +40,11 @@ function html() {
       })
     )
     .pipe(
-      htmlmin({
-        collapseWhitespace: false,
+      size({
+        gzip: true,
+        pretty: true,
+        showFiles: true,
+        showTotal: true,
       })
     )
     .pipe(dest("app/"))
@@ -55,8 +58,21 @@ function scripts() {
     "!app/js/main.min.js",
     "app/js/main.js",
   ])
-    .pipe(concat("main.min.js"))
     .pipe(uglify()) // Сжатие JavaScript кода
+    .pipe(
+      babel({
+        presets: ["@babel/env"],
+      })
+    )
+    .pipe(concat("main.min.js"))
+    .pipe(
+      size({
+        gzip: true,
+        pretty: true,
+        showFiles: true,
+        showTotal: true,
+      })
+    )
     .pipe(dest("app/js/"))
     .pipe(browserSync.stream());
 }
@@ -70,12 +86,12 @@ function styles() {
     .pipe(
       sass({
         outputStyle: "expanded", // "compressed"
-      })
+      }).on("error", sass.logError)
     )
     .pipe(concat("style.css"))
     .pipe(
       autoprefixer({
-        overrideBrowserslist: ["last 10 versions"],
+        overrideBrowserslist: ["last 8 versions"],
         cascade: true,
         browsers: [
           "Android >= 4",
@@ -89,6 +105,14 @@ function styles() {
       })
     ) // Добавляет вендорные префиксы
     .pipe(gcmq()) //Группирует медиа
+    .pipe(
+      size({
+        gzip: true,
+        pretty: true,
+        showFiles: true,
+        showTotal: true,
+      })
+    )
     .pipe(dest("app/css/"))
     .pipe(
       rename(function (path) {
@@ -98,32 +122,60 @@ function styles() {
     .pipe(
       cleancss({
         level: {
-          1: {
+          2: {
             specialComments: 0,
           },
         },
       })
     ) // format: "beautify",
+    .pipe(
+      size({
+        gzip: true,
+        pretty: true,
+        showFiles: true,
+        showTotal: true,
+      })
+    )
     .pipe(dest("app/css/"))
     .pipe(browserSync.stream());
 }
 
 function images() {
   return src("app/images/src/**/*")
-    .pipe(newer("app/images/dest")) //было ли изменено (сжато) изображение ранее, что бы не сжимать его повторно
     .pipe(
-      imagemin([
-        recompress({
-          loops: 4,
-          min: 80,
-          max: 100,
-          quality: "high",
-          use: [pngquant()],
-        }),
-        imagemin.gifsicle(),
-        imagemin.optipng(),
-        imagemin.svgo(),
-      ])
+      imagemin(
+        {
+          interlaced: true,
+          progressive: true,
+          optimizationLevel: 5,
+        },
+        [
+          recompress({
+            loops: 6,
+            min: 50,
+            max: 90,
+            quality: "high",
+            use: [
+              pngquant({
+                quality: [0.7, 0.9],
+                strip: true,
+                speed: 1,
+              }),
+            ],
+          }),
+          imagemin.gifsicle(),
+          imagemin.optipng(),
+          imagemin.svgo(),
+        ]
+      )
+    )
+    .pipe(
+      size({
+        gzip: true,
+        pretty: true,
+        showFiles: true,
+        showTotal: true,
+      })
     )
     .pipe(dest("app/images/dest"));
 }
@@ -151,6 +203,14 @@ function svg2sprite() {
         },
       })
     )
+    .pipe(
+      size({
+        gzip: true,
+        pretty: true,
+        showFiles: true,
+        showTotal: true,
+      })
+    )
     .pipe(dest("app/images/src"));
 }
 
@@ -164,12 +224,6 @@ function cleandist() {
   return del("dist/**/*", {
     force: true,
   }); // Удаляем всё содержимое папки "dist"
-}
-
-function cleanicons() {
-  return del("app/images/src/icons/*.svg", {
-    force: true,
-  }); // Удаляем всё содержимое папки "icons"
 }
 
 function buildcopy() {
@@ -214,8 +268,6 @@ exports.svg2sprite = svg2sprite;
 exports.cleandist = cleandist;
 
 exports.cleanimg = cleanimg;
-
-exports.cleanicons = cleanicons;
 
 exports.build = series(cleandist, styles, scripts, images, buildcopy);
 

@@ -4,10 +4,10 @@
   display: $display;
 }
 
-@mixin bg($bg-repeat: no-repeat, $bg-size: cover, $bg-position: center center) {
-  background-position: $bg-position;
-  background-size: $bg-size;
-  background-repeat: $bg-repeat;
+@mixin bg($repeat: no-repeat, $size: cover, $position: center center) {
+  background-position: $position;
+  background-size: $size;
+  background-repeat: $repeat;
 }
 
 @mixin txt($lc: 3) {
@@ -20,6 +20,52 @@
   -webkit-box-orient: vertical;
   line-clamp: $lc;
   box-orient: vertical;
+}
+
+@mixin btn_anim($scaleMax: 1.05, $scaleMin: 0.95) {
+  transform-origin: center center;
+  transition: all ease-out 240ms;
+
+  &:hover {
+    transform: scale($scaleMax);
+  }
+
+  &:focus {
+    transform: scale($scaleMax) trahslateY(-5%);
+  }
+
+  &:active {
+    transform: scale($scaleMin);
+  }
+}
+
+@mixin font-face($name, $file, $weight: 400, $style: normal) {
+  @font-face {
+    font-family: "#{$name}";
+    src: url("../fonts/#{$file}.eot");
+    src: url("../fonts/#{$file}.eot?#iefix") format("embedded-opentype"),
+      url("../fonts/#{$file}.woff2") format("woff2"),
+      url("../fonts/#{$file}.woff") format("woff");
+    font-weight: $weight;
+    font-style: $style;
+    font-display: swap;
+  }
+}
+
+@mixin centering($dir) {
+  position: absolute;
+
+  @if $dir==v {
+    top: 50%;
+    transform: translateY(-50%);
+  } @else if $dir==h {
+    left: 50%;
+    transform: translateX(-50%);
+  } @else {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
 }
 
 $breakpoints: (
