@@ -1,5 +1,53 @@
 $(function () {});
 
+// липкая шапка
+var header = $(".menu"),
+  scrollPrev = 0;
+
+$(window).scroll(function () {
+  var scrolled = $(window).scrollTop();
+
+  if (scrolled > 100 && scrolled > scrollPrev) {
+    header.addClass("out");
+  } else {
+    header.removeClass("out");
+  }
+  scrollPrev = scrolled;
+});
+
+  //кнопка наверх
+  $(window).scroll(function () {
+    if ($(this).scrollTop() != 0) {
+      $(".up").fadeIn();
+    } else {
+      $(".up").fadeOut();
+    }
+  });
+
+  $(".up").click(function () {
+    $("body,html").animate({ scrollTop: 0 }, 800);
+  });
+
+  // плавный скролл
+// Найти все ссылки начинающиеся на #
+const anchors = document.querySelectorAll('a[href^="#"]');
+
+// Цикл по всем ссылкам
+for (let anchor of anchors) {
+  anchor.addEventListener("click", function (e) {
+    e.preventDefault(); // Предотвратить стандартное поведение ссылок
+    // Атрибут href у ссылки, если его нет то перейти к body (наверх не плавно)
+    const goto = anchor.hasAttribute("href")
+      ? anchor.getAttribute("href")
+      : "body";
+    // Плавная прокрутка до элемента с id = href у ссылки
+    document.querySelector(goto).scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  });
+}
+
 // animated
 AOS.init({
   // Global settings:

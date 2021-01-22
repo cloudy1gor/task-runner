@@ -3,7 +3,6 @@ const { src, dest, parallel, series, watch } = require("gulp");
 
 const browserSync = require("browser-sync").create();
 const concat = require("gulp-concat");
-const babel = require("gulp-babel");
 const uglify = require("gulp-uglify-es").default;
 const sass = require("gulp-sass");
 const autoprefixer = require("gulp-autoprefixer");
@@ -59,11 +58,6 @@ function scripts() {
     "app/js/main.js",
   ])
     .pipe(uglify()) // Сжатие JavaScript кода
-    .pipe(
-      babel({
-        presets: ["@babel/env"],
-      })
-    )
     .pipe(concat("main.min.js"))
     .pipe(
       size({

@@ -19,7 +19,7 @@ body {
 .wrapper {
   display: flex;
   flex-direction: column;
-  overflow-x: hidden;
+  overflow: hidden;
 }
 
 .main {
@@ -30,4 +30,23 @@ body {
   margin: 0 auto;
   padding: 0 15px;
   max-width: 1230px;
+}
+
+// кноака наверх
+.up {
+  position: fixed;
+  right: 30px;
+  bottom: 30px;
+  z-index: 999;
+  display: none;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+
+  &--animated {
+    animation-name: up;
+    animation-duration: 2s;
+    animation-timing-function: ease;
+    animation-iteration-count: infinite;
+  }
 }
