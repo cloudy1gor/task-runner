@@ -5,6 +5,8 @@ const browserSync = require("browser-sync").create();
 const concat = require("gulp-concat");
 const uglify = require("gulp-uglify-es").default;
 const sass = require("gulp-sass");
+const babel = require("gulp-babel");
+const sourcemaps = require("gulp-sourcemaps");
 const autoprefixer = require("gulp-autoprefixer");
 const cleancss = require("gulp-clean-css");
 const size = require("gulp-size");
@@ -14,9 +16,18 @@ const pngquant = require("imagemin-pngquant");
 const del = require("del");
 const gcmq = require("gulp-group-css-media-queries");
 const fileinclude = require("gulp-file-include");
-const rename = require("gulp-rename");
 const svgmin = require("gulp-svgmin");
 const svgsprite = require("gulp-svg-sprite");
+const ttf2woff2 = require("gulp-ttftowoff2");
+const ttf2woff = require("gulp-ttf2woff");
+const ttf2eot = require("gulp-ttf2eot");
+
+const jsFiles = [
+  "node_modules/jquery/dist/jquery.js",
+  "node_modules/aos/dist/aos.js",
+  "!app/js/main.min.js",
+  "app/js/main.js",
+];
 
 function browsersync() {
   browserSync.init({
@@ -51,14 +62,10 @@ function html() {
 }
 
 function scripts() {
-  return src([
-    "node_modules/jquery/dist/jquery.js",
-    "node_modules/aos/dist/aos.js",
-    "!app/js/main.min.js",
-    "app/js/main.js",
-  ])
-    .pipe(uglify()) // Сжатие JavaScript кода
+  return src(jsFiles)
+    .pipe(babel({ presets: ["@babel/env"] }))
     .pipe(concat("main.min.js"))
+    .pipe(uglify()) // Сжатие JavaScript кода
     .pipe(
       size({
         gzip: true,
@@ -72,17 +79,13 @@ function scripts() {
 }
 
 function styles() {
-  return src([
-    "node_modules/normalize.css/normalize.css",
-    "!app/scss/_*.scss",
-    "app/scss/style.scss",
-  ])
+  return src("app/scss/style.scss")
+    .pipe(sourcemaps.init())
     .pipe(
       sass({
         outputStyle: "expanded", // "compressed"
       }).on("error", sass.logError)
     )
-    .pipe(concat("style.css"))
     .pipe(
       autoprefixer({
         overrideBrowserslist: ["last 8 versions"],
@@ -100,20 +103,6 @@ function styles() {
     ) // Добавляет вендорные префиксы
     .pipe(gcmq()) //Группирует медиа
     .pipe(
-      size({
-        gzip: true,
-        pretty: true,
-        showFiles: true,
-        showTotal: true,
-      })
-    )
-    .pipe(dest("app/css/"))
-    .pipe(
-      rename(function (path) {
-        path.basename += ".min";
-      })
-    )
-    .pipe(
       cleancss({
         level: {
           2: {
@@ -122,6 +111,7 @@ function styles() {
         },
       })
     ) // format: "beautify",
+    .pipe(concat("style.min.css"))
     .pipe(
       size({
         gzip: true,
@@ -130,6 +120,7 @@ function styles() {
         showTotal: true,
       })
     )
+    .pipe(sourcemaps.write())
     .pipe(dest("app/css/"))
     .pipe(browserSync.stream());
 }
@@ -208,6 +199,18 @@ function svg2sprite() {
     .pipe(dest("app/images/src"));
 }
 
+function towoff() {
+  return src("app/fonts/*.ttf").pipe(ttf2woff()).pipe(dest("app/fonts/"));
+}
+
+function towoff2() {
+  return src("app/fonts/*.ttf").pipe(ttf2woff2()).pipe(dest("app/fonts/"));
+}
+
+function toeot() {
+  return src("app/fonts/*.ttf").pipe(ttf2eot()).pipe(dest("app/fonts/"));
+}
+
 function cleanimg() {
   return del("app/images/dest/**/*", {
     force: true,
@@ -223,10 +226,11 @@ function cleandist() {
 function buildcopy() {
   return src(
     [
+      "app/*.html",
       "app/css/**/*.min.css",
       "app/js/**/main.min.js",
       "app/images/dest/**/*",
-      "app/*.html",
+      "app/fonts/*",
     ],
     {
       base: "app",
@@ -258,6 +262,12 @@ exports.styles = styles;
 exports.images = images;
 
 exports.svg2sprite = svg2sprite;
+
+exports.towoff = towoff;
+
+exports.towoff2 = towoff2;
+
+exports.toeot = toeot;
 
 exports.cleandist = cleandist;
 
