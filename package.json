@@ -1,19 +1,33 @@
 {
-  "name": "html-start",
-  "version": "1.0.0",
+  "name": "sempai",
+  "version": "1.5.1",
   "description": "Html start template",
-  "main": "index.js",
+  "main": "index.html",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "stylelint-fix": " stylelint ./app/scss/**/*.scss --fix --syntax scss"
   },
-  "author": "none",
+  "repository": {
+    "type": "git",
+    "url": "github.com/cloudy1gor/def-gulp"
+  },
+  "keywords": [
+    "gulp",
+    "html",
+    "scss",
+    "js",
+    "svgsprite"
+  ],
+  "author": "Igor Savelyev",
   "license": "ISC",
   "devDependencies": {
     "@babel/core": "^7.12.10",
     "@babel/preset-env": "^7.12.11",
+    "normalize.css": "^8.0.1",
+    "jquery": "^3.5.1",
     "aos": "^3.0.0-beta.6",
     "browser-sync": "^2.26.13",
+    "browsersync-ssi": "^0.2.4",
     "del": "^6.0.0",
     "gulp": "^4.0.2",
     "gulp-autoprefixer": "^7.0.1",
@@ -24,6 +38,7 @@
     "gulp-file-include": "^2.2.2",
     "gulp-group-css-media-queries": "^1.2.2",
     "gulp-imagemin": "^7.1.0",
+    "gulp-newer": "^1.4.0",
     "gulp-sass": "^4.1.0",
     "gulp-size": "^3.0.0",
     "gulp-sourcemaps": "^3.0.0",
@@ -35,8 +50,6 @@
     "gulp-uglify-es": "^2.0.0",
     "imagemin-jpeg-recompress": "^7.0.0",
     "imagemin-pngquant": "^9.0.1",
-    "jquery": "^3.5.1",
-    "normalize.css": "^8.0.1",
     "stylelint": "^13.7.2",
     "stylelint-declaration-block-no-ignored-properties": "^2.3.0",
     "stylelint-order": "^4.1.0",
