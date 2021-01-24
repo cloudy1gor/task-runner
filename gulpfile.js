@@ -2,12 +2,11 @@
 const { src, dest, parallel, series, watch } = require("gulp");
 
 const browserSync = require("browser-sync").create();
-const bssi = require("browsersync-ssi");
 const concat = require("gulp-concat");
-const uglify = require("gulp-uglify-es").default;
-const sass = require("gulp-sass");
 const babel = require("gulp-babel");
 const sourcemaps = require("gulp-sourcemaps");
+const uglify = require("gulp-uglify-es").default;
+const sass = require("gulp-sass");
 const autoprefixer = require("gulp-autoprefixer");
 const cleancss = require("gulp-clean-css");
 const size = require("gulp-size");
@@ -27,30 +26,28 @@ const ttf2eot = require("gulp-ttf2eot");
 const jsFiles = [
   "node_modules/jquery/dist/jquery.js",
   "node_modules/aos/dist/aos.js",
-  "!src/js/main.min.js",
-  "src/js/main.js",
+  "!app/js/main.min.js",
+  "app/js/main.js",
 ];
 
 function browsersync() {
   browserSync.init({
     server: {
-      baseDir: "src",
+      baseDir: "./app",
       index: "index.html",
-      middleware: bssi({ baseDir: "src/", ext: ".html" }),
     }, // Папка сервера (Исходные файлы)
     notify: false,
     online: true,
     open: false,
-    tunnel: "cloudy1gor", // URL https://cloudy1gor.loca.lt
   });
 }
 
 function html() {
-  return src(["src/html/pages/*.html", "!src/html/components/_*.html"])
+  return src(["app/html/pages/*.html", "!app/html/components/_*.html"])
     .pipe(
       fileinclude({
         prefix: "@@",
-        basepath: "./src/",
+        basepath: "app/",
       })
     )
     .pipe(
@@ -61,7 +58,7 @@ function html() {
         showTotal: true,
       })
     )
-    .pipe(dest("src/"))
+    .pipe(dest("app/"))
     .pipe(browserSync.stream());
 }
 
@@ -78,12 +75,16 @@ function scripts() {
         showTotal: true,
       })
     )
-    .pipe(dest("src/js/"))
+    .pipe(dest("app/js/"))
     .pipe(browserSync.stream());
 }
 
 function styles() {
-  return src("src/scss/style.scss")
+  return src([
+    "node_modules/normalize.css/normalize.css",
+    "!app/scss/_*.scss",
+    "app/scss/style.scss",
+  ])
     .pipe(sourcemaps.init())
     .pipe(
       sass({
@@ -125,13 +126,13 @@ function styles() {
       })
     )
     .pipe(sourcemaps.write())
-    .pipe(dest("src/css/"))
+    .pipe(dest("app/css/"))
     .pipe(browserSync.stream());
 }
 
 function images() {
-  return src("src/images/src/**/*")
-    .pipe(newer("src/images/dest")) // не сжимать изображение повторно
+  return src("app/images/src/**/*")
+    .pipe(newer("app/images/dest"))
     .pipe(
       imagemin(
         {
@@ -167,11 +168,11 @@ function images() {
         showTotal: true,
       })
     )
-    .pipe(dest("src/images/dest"));
+    .pipe(dest("app/images/dest"));
 }
 
 function svg2sprite() {
-  return src("src/images/src/icons/*.svg")
+  return src("app/images/src/icons/*.svg")
     .pipe(
       svgmin({
         plugins: [
@@ -201,25 +202,25 @@ function svg2sprite() {
         showTotal: true,
       })
     )
-    .pipe(dest("src/images/src"));
+    .pipe(dest("app/images/src"));
 }
 
 function towoff() {
-  return src("src/fonts/*.ttf").pipe(ttf2woff()).pipe(dest("src/fonts/"));
+  return src("app/fonts/*.ttf").pipe(ttf2woff()).pipe(dest("app/fonts/"));
 }
 
 function towoff2() {
-  return src("src/fonts/*.ttf").pipe(ttf2woff2()).pipe(dest("src/fonts/"));
+  return src("app/fonts/*.ttf").pipe(ttf2woff2()).pipe(dest("app/fonts/"));
 }
 
 function toeot() {
-  return src("src/fonts/*.ttf").pipe(ttf2eot()).pipe(dest("src/fonts/"));
+  return src("app/fonts/*.ttf").pipe(ttf2eot()).pipe(dest("app/fonts/"));
 }
 
 function cleanimg() {
-  return del("src/images/dest/**/*", {
+  return del("app/images/dest/**/*", {
     force: true,
-  }); // Удаляем всё содержимое папки "src/images/#dest/"
+  }); // Удаляем всё содержимое папки "app/images/#dest/"
 }
 
 function cleandist() {
@@ -231,29 +232,28 @@ function cleandist() {
 function buildcopy() {
   return src(
     [
-      "src/*.html",
-      "src/css/**/*.min.css",
-      "src/js/**/main.min.js",
-      "src/images/dest/**/*",
-      "src/fonts/*",
+      "app/css/**/*.min.css",
+      "app/js/**/main.min.js",
+      "app/images/dest/**/*",
+      "app/*.html",
     ],
     {
-      base: "src",
+      base: "app",
     }
-  ) // Сохраняем структуру src при копировании
+  ) // Сохраняем структуру app при копировании
     .pipe(dest("dist")); // Выгружаем финальную сборку в папку dist
 }
 
 function startwatch() {
-  watch("src/html/**/*", html);
+  watch("app/html/**/*", html);
 
-  watch("src/scss/**/*", styles);
+  watch("app/scss/**/*", styles);
 
-  watch(["src/**/*.js", "!src/**/*.min.js"], scripts);
+  watch(["app/**/*.js", "!app/**/*.min.js"], scripts);
 
-  watch("src/images/src/**/*", images);
+  watch("app/images/src/**/*", images);
 
-  watch("src/images/src/icons/*.svg", svg2sprite);
+  watch("app/images/src/icons/*.svg", svg2sprite);
 }
 
 exports.browsersync = browsersync;
