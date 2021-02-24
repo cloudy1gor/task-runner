@@ -1,63 +1,68 @@
 // Определение констант Gulp
 const { src, dest, parallel, series, watch } = require("gulp");
 
+const pug = require("gulp-pug");
 const fileinclude = require("gulp-file-include");
+const htmlmin = require("gulp-htmlmin");
+const webpack = require("webpack-stream");
 const browserSync = require("browser-sync").create();
-const concat = require("gulp-concat");
-const babel = require("gulp-babel");
+const rename = require("gulp-rename");
 const plumber = require("gulp-plumber");
-const gulpif = require("gulp-if");
-const yargs = require("yargs").argv;
 const notify = require("gulp-notify");
 const sourcemaps = require("gulp-sourcemaps");
-const uglify = require("gulp-uglify-es").default;
 const sass = require("gulp-sass");
+const fibers = require("fibers"); // для лучшей компиляции scss
 const autoprefixer = require("gulp-autoprefixer");
 const cleancss = require("gulp-clean-css");
 const size = require("gulp-size");
 const imagemin = require("gulp-imagemin");
 const mozjpeg = require("imagemin-mozjpeg");
 const pngquant = require("imagemin-pngquant");
-const newer = require("gulp-newer");
+const changed = require("gulp-changed");
 const recompress = require("imagemin-jpeg-recompress");
 const del = require("del");
 const gcmq = require("gulp-group-css-media-queries");
 const svgmin = require("gulp-svgmin");
+const svgcss = require("gulp-svg-css-pseudo");
 const svgsprite = require("gulp-svg-sprite");
 const ttf2woff2 = require("gulp-ttftowoff2");
 const ttf2woff = require("gulp-ttf2woff");
 const ttf2eot = require("gulp-ttf2eot");
 
-const jsFiles = [
-  "node_modules/jquery/dist/jquery.js",
-  "node_modules/aos/dist/aos.js",
-  "!app/js/main.min.js",
-  "app/js/main.js",
-];
-
-const isProduction = yargs.env === "production" ? true : false;
+// кастом
+const images = parallel(img, svg2css, svg2sprite);
+const fonts = series(woff, woff2, eot);
+const jsFiles = ["src/js/main.js"];
 
 function browsersync() {
   browserSync.init({
     server: {
-      baseDir: "./app",
+      baseDir: "./dist",
       index: "index.html",
-    }, // Папка сервера (Исходные файлы)
-    notify: false,
-    online: true,
+    },
     open: false,
+    notify: true,
+    online: false,
+    logPrefix: "Sempai🔥",
+    logLevel: "info",
   });
 }
 
 function html() {
-  return src("app/html/pages/*.html")
+  return src(["src/templates/pages/*.html", "src/templates/pages/*.pug"])
     .pipe(
       plumber({ errorHandler: notify.onError("Error: <%= error.message %>") })
     )
     .pipe(
       fileinclude({
         prefix: "@@",
-        basepath: "app/",
+        basepath: "src/",
+      })
+    )
+    .pipe(htmlmin({ collapseWhitespace: true }))
+    .pipe(
+      pug({
+        pretty: false, // Форматирование
       })
     )
     .pipe(
@@ -68,8 +73,8 @@ function html() {
         showTotal: true,
       })
     )
-    .pipe(dest("app/"))
-    .pipe(browserSync.stream());
+    .pipe(dest("dist/"))
+    .pipe(browserSync.reload({ stream: true }));
 }
 
 function scripts() {
@@ -77,9 +82,37 @@ function scripts() {
     .pipe(
       plumber({ errorHandler: notify.onError("Error: <%= error.message %>") })
     )
-    .pipe(babel({ presets: ["@babel/env"] }))
-    .pipe(gulpif(isProduction, uglify())) // Сжатие JavaScript кода
-    .pipe(concat("main.min.js"))
+    .pipe(
+      webpack({
+        mode: "production",
+        output: {
+          filename: "main.min.js",
+        },
+        module: {
+          rules: [
+            {
+              test: /\.m?js$/,
+              exclude: /(node_modules|bower_components)/,
+              use: {
+                loader: "babel-loader",
+                options: {
+                  presets: [
+                    [
+                      "@babel/preset-env",
+                      {
+                        corejs: 3,
+                        useBuiltIns: "usage",
+                      },
+                    ],
+                  ],
+                },
+              },
+            },
+          ],
+        },
+      })
+    )
+    .pipe(dest("dist/js/"))
     .pipe(
       size({
         gzip: true,
@@ -88,27 +121,22 @@ function scripts() {
         showTotal: true,
       })
     )
-    .pipe(dest("app/js/"))
-    .pipe(browserSync.stream({ stream: true }));
+    .pipe(browserSync.reload({ stream: true }));
 }
 
 function styles() {
-  return src("app/scss/style.scss")
+  return src("src/scss/style.scss")
     .pipe(
       plumber({ errorHandler: notify.onError("Error: <%= error.message %>") })
     )
-    .pipe(gulpif(!isProduction, sourcemaps.init()))
-    .pipe(
-      sass({
-        outputStyle: "expanded", // "compressed"
-      })
-    )
+    .pipe(sourcemaps.init())
+    .pipe(sass({ outputStyle: "expanded" }, { fibers: fibers }))
     .pipe(
       autoprefixer({
         overrideBrowserslist: ["last 8 versions"],
         cascade: true,
         browsers: [
-          "Android >= 4",
+          "Android >= 6",
           "Chrome >= 20",
           "Firefox >= 24",
           "Explorer >= 11",
@@ -120,19 +148,18 @@ function styles() {
     ) // Добавляет вендорные префиксы
     .pipe(gcmq()) //Группирует медиа
     .pipe(
-      gulpif(
-        isProduction,
-        cleancss({
-          level: {
-            2: {
-              specialComments: 0,
-              // format: "beautify",
-            },
+      cleancss({
+        level: {
+          2: {
+            specialComments: 0,
+            // format: "beautify",
           },
-        })
-      )
+        },
+      })
     )
-    .pipe(concat("style.min.css"))
+    .pipe(rename("style.min.css"))
+    .pipe(sourcemaps.write("."))
+    .pipe(dest("dist/css/"))
     .pipe(
       size({
         gzip: true,
@@ -141,13 +168,15 @@ function styles() {
         showTotal: true,
       })
     )
-    .pipe(gulpif(!isProduction, sourcemaps.write()))
-    .pipe(dest("app/css/"))
-    .pipe(browserSync.stream({ stream: true }));
+    .pipe(browserSync.reload({ stream: true }));
 }
 
-function images() {
-  return src("app/images/**/*.+(jpg|jpeg|png|gif|svg|ico)")
+function img() {
+  return src([
+    "src/images/**/*.+(jpg|jpeg|png|gif|svg|ico)",
+    "!src/images/svg/**/*.svg",
+  ])
+    .pipe(changed("dist/images")) // не сжимать повторно
     .pipe(
       plumber({ errorHandler: notify.onError("Error: <%= error.message %>") })
     )
@@ -183,7 +212,7 @@ function images() {
         ]
       )
     )
-    .pipe(newer("app/images")) // не сжимать изображения повторно
+    .pipe(dest("dist/images"))
     .pipe(
       size({
         gzip: true,
@@ -192,12 +221,45 @@ function images() {
         showTotal: true,
       })
     )
-    .pipe(dest("app/images"))
-    .pipe(browserSync.stream({ stream: true }));
+    .pipe(browserSync.reload({ stream: true }));
+}
+
+function svg2css() {
+  return src("src/images/svg/css/*.svg")
+    .pipe(
+      svgmin({
+        plugins: [
+          {
+            removeComments: true,
+          },
+          {
+            removeEmptyContainers: true,
+          },
+        ],
+      })
+    )
+    .pipe(
+      svgcss({
+        fileName: "_sprite",
+        fileExt: "scss",
+        cssPrefix: "svg",
+        addSize: false,
+      })
+    )
+    .pipe(dest("./src/scss"))
+    .pipe(
+      size({
+        gzip: true,
+        pretty: true,
+        showFiles: true,
+        showTotal: true,
+      })
+    );
 }
 
 function svg2sprite() {
-  return src("app/images/icons/*.svg")
+  return src("src/images/svg/icons/*.svg")
+    .pipe(changed("dist/images")) // не сжимать повторно
     .pipe(
       plumber({ errorHandler: notify.onError("Error: <%= error.message %>") })
     )
@@ -220,8 +282,15 @@ function svg2sprite() {
             sprite: "../sprite.svg",
           },
         },
+        shape: {
+          dimension: {
+            maxWidth: 50,
+            maxHeight: 50,
+          },
+        },
       })
     )
+    .pipe(dest("dist/images"))
     .pipe(
       size({
         gzip: true,
@@ -230,35 +299,67 @@ function svg2sprite() {
         showTotal: true,
       })
     )
-    .pipe(dest("app/images"))
-    .pipe(browserSync.stream({ stream: true }));
+    .pipe(browserSync.reload({ stream: true }));
 }
 
 function woff() {
-  return src("app/fonts/*.ttf")
+  return src("src/fonts/*.ttf")
+    .pipe(
+      plumber({ errorHandler: notify.onError("Error: <%= error.message %>") })
+    )
+    .pipe(
+      changed("dist/fonts", {
+        extension: ".woff",
+        hasChanged: changed.compareLastModifiedTime,
+      })
+    )
     .pipe(
       plumber({ errorHandler: notify.onError("Error: <%= error.message %>") })
     )
     .pipe(ttf2woff())
-    .pipe(dest("app/fonts/"));
+    .pipe(dest("dist/fonts/"));
 }
 
 function woff2() {
-  return src("app/fonts/*.ttf")
+  return src("src/fonts/*.ttf")
+    .pipe(
+      plumber({ errorHandler: notify.onError("Error: <%= error.message %>") })
+    )
+    .pipe(
+      changed("dist/fonts", {
+        extension: ".woff2",
+        hasChanged: changed.compareLastModifiedTime,
+      })
+    )
     .pipe(
       plumber({ errorHandler: notify.onError("Error: <%= error.message %>") })
     )
     .pipe(ttf2woff2())
-    .pipe(dest("app/fonts/"));
+    .pipe(dest("dist/fonts/"));
 }
 
 function eot() {
-  return src("app/fonts/*.ttf")
+  return src("src/fonts/*.ttf")
+    .pipe(
+      plumber({ errorHandler: notify.onError("Error: <%= error.message %>") })
+    )
+    .pipe(
+      changed("dist/fonts", {
+        extension: ".eot",
+        hasChanged: changed.compareLastModifiedTime,
+      })
+    )
     .pipe(
       plumber({ errorHandler: notify.onError("Error: <%= error.message %>") })
     )
     .pipe(ttf2eot())
-    .pipe(dest("app/fonts/"));
+    .pipe(dest("dist/fonts/"));
+}
+
+function cleanimg() {
+  return del("dist/images/**/*", {
+    force: true,
+  }); // Удаление папки "dist/images"
 }
 
 function cleandist() {
@@ -270,28 +371,32 @@ function cleandist() {
 function buildcopy() {
   return src(
     [
-      "app/css/**/*.min.css",
-      "app/js/**/main.min.js",
-      "app/images/dest/**/*",
-      "app/*.html",
+      "src/css/**/*.min.css",
+      "src/js/**/main.min.js",
+      "src/images/dest/**/*",
+      "src/*.html",
     ],
     {
-      base: "app",
+      base: "src",
     }
-  ) // Сохраняем структуру app при копировании
+  ) // Сохраняем структуру src при копировании
     .pipe(dest("dist")); // Выгружаем финальную сборку в папку dist
 }
 
 function startwatch() {
-  watch("app/html/**/*", html);
+  watch("src/templates/**/*.+(html|pug)", html);
 
-  watch("app/scss/**/*", styles);
+  watch("src/scss/**/*.scss", styles);
 
-  watch(["app/**/*.js", "!app/**/*.min.js"], scripts);
+  watch(["src/js/**/*.js", "!src/js/*.min.js"], scripts);
 
-  watch("app/images/**/*", images);
+  watch("src/images/**/*.+(jpg|jpeg|png|gif|svg|ico)", img);
 
-  watch("app/images/icons/*.svg", svg2sprite);
+  watch("src/images/svg/icons/*.svg", svg2sprite);
+
+  watch("src/images/svg/css/*.svg", svg2css);
+
+  watch("src/fonts/*ttf", fonts);
 }
 
 exports.browsersync = browsersync;
@@ -302,25 +407,10 @@ exports.scripts = scripts;
 
 exports.styles = styles;
 
-exports.images = images;
-
-exports.svg2sprite = svg2sprite;
-
-exports.towoff = woff;
-
-exports.towoff2 = woff2;
-
-exports.toeot = eot;
+exports.cleanimg = cleanimg;
 
 exports.cleandist = cleandist;
 
-exports.build = series(cleandist, styles, scripts, images, buildcopy);
-
-exports.default = parallel(
-  html,
-  svg2sprite,
-  styles,
-  scripts,
-  browsersync,
-  startwatch
+exports.default = series(
+  parallel(html, scripts, styles, images, fonts, browsersync, startwatch)
 );

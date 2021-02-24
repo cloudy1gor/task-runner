@@ -9,6 +9,5 @@ npm-debug.*
 *.psd
 *.png
 package-lock.json
-dist/
-app/css/*
+desktop.ini
 

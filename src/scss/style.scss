@@ -1,9 +1,13 @@
+@import "libs";
+@import "reset";
 @import "vars";
 @import "mixin";
 @import "fonts";
-@import "reset";
-@import "libs";
 @import "global";
 @import "pages/404";
 @import "components/header";
 @import "components/footer";
+
+body {
+  background-color: green;
+}

@@ -536,7 +536,7 @@
     "declaration-empty-line-before":
       "never",
     "declaration-no-important": [
-      true,
+      null,
       {
         "severity": "warning"
       }
@@ -566,7 +566,7 @@
     "function-whitelist": null,
     "function-whitespace-after": "always",
     "indentation": 2,
-    "keyframe-declaration-no-important": true,
+    "keyframe-declaration-no-important": null,
     "length-zero-no-unit": true,
     "max-empty-lines": 1,
     "max-line-length": 120,

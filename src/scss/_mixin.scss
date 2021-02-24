@@ -3,13 +3,11 @@
   position: $pos;
   display: $display;
 }
-
 @mixin bg($repeat: no-repeat, $size: cover, $position: center center) {
   background-position: $position;
   background-size: $size;
   background-repeat: $repeat;
 }
-
 @mixin txt($lc: 3) {
   overflow: hidden;
   text-overflow: ellipsis;
@@ -21,25 +19,23 @@
   line-clamp: $lc;
   box-orient: vertical;
 }
-
-@mixin btn_anim($scaleMax: 1.05, $scaleMin: 0.95) {
+@mixin btnanim($max: 1.05, $min: 0.95) {
   transform-origin: center center;
   transition: all ease-out 240ms;
 
   &:hover {
-    transform: scale($scaleMax);
+    transform: scale($max);
   }
 
   &:focus {
-    transform: scale($scaleMax) trahslateY(-5%);
+    transform: scale($max) trahslateY(-5%);
   }
 
   &:active {
-    transform: scale($scaleMin);
+    transform: scale($min);
   }
 }
-
-@mixin font-face($name, $file, $weight: 400, $style: normal) {
+@mixin font($name, $file, $weight: 400, $style: normal) {
   @font-face {
     font-family: "#{$name}";
     src: url("../fonts/#{$file}.eot");
@@ -51,8 +47,7 @@
     font-display: swap;
   }
 }
-
-@mixin centering($dir) {
+@mixin center($dir) {
   position: absolute;
 
   @if $dir==v {
@@ -78,7 +73,6 @@ $breakpoints: (
   "1248": 1248px,
   "1920": 1920px,
 );
-
 @mixin mq($width, $type: max) {
   @if map_has_key($breakpoints, $width) {
     $width: map_get($breakpoints, $width);
