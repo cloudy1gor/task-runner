@@ -368,19 +368,10 @@ function cleandist() {
   }); // Удаляем всё содержимое папки "dist"
 }
 
-function buildcopy() {
-  return src(
-    [
-      "src/css/**/*.min.css",
-      "src/js/**/main.min.js",
-      "src/images/dest/**/*",
-      "src/*.html",
-    ],
-    {
-      base: "src",
-    }
-  ) // Сохраняем структуру src при копировании
-    .pipe(dest("dist")); // Выгружаем финальную сборку в папку dist
+function copy() {
+  return src(["src/sites/**/*", "src/fonts/*"], {
+    base: "src",
+  }).pipe(dest("dist"));
 }
 
 function startwatch() {
@@ -410,6 +401,8 @@ exports.styles = styles;
 exports.cleanimg = cleanimg;
 
 exports.cleandist = cleandist;
+
+exports.cop = series(copy);
 
 exports.default = series(
   parallel(html, scripts, styles, images, fonts, browsersync, startwatch)
