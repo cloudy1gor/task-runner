@@ -1,4 +1,4 @@
-// Определение констант Gulp
+"use strict";
 const { src, dest, parallel, series, watch } = require("gulp");
 
 const pug = require("gulp-pug");
@@ -31,7 +31,7 @@ const ttf2eot = require("gulp-ttf2eot");
 
 // кастом
 const images = parallel(img, svg2css, svg2sprite);
-const fonts = series(woff, woff2, eot);
+const fonts = series(woff, eot);
 const jsFiles = ["src/js/main.js"];
 
 function browsersync() {
@@ -59,7 +59,7 @@ function html() {
         basepath: "src/",
       })
     )
-    .pipe(htmlmin({ collapseWhitespace: true }))
+    .pipe(htmlmin({ collapseWhitespace: true, removeComments: true }))
     .pipe(
       pug({
         pretty: false, // Форматирование
@@ -284,8 +284,8 @@ function svg2sprite() {
         },
         shape: {
           dimension: {
-            maxWidth: 50,
-            maxHeight: 50,
+            maxWidth: 80,
+            maxHeight: 80,
           },
         },
       })
@@ -303,7 +303,7 @@ function svg2sprite() {
 }
 
 function woff() {
-  return src("src/fonts/*.ttf")
+  src("src/fonts/*.ttf")
     .pipe(
       plumber({ errorHandler: notify.onError("Error: <%= error.message %>") })
     )
@@ -318,9 +318,7 @@ function woff() {
     )
     .pipe(ttf2woff())
     .pipe(dest("dist/fonts/"));
-}
 
-function woff2() {
   return src("src/fonts/*.ttf")
     .pipe(
       plumber({ errorHandler: notify.onError("Error: <%= error.message %>") })
@@ -353,7 +351,7 @@ function eot() {
       plumber({ errorHandler: notify.onError("Error: <%= error.message %>") })
     )
     .pipe(ttf2eot())
-    .pipe(dest("dist/fonts/"));
+    .pipe(dest("dist/fonts/")); // формат шрифта для IE8 и ниже
 }
 
 function cleanimg() {
@@ -369,9 +367,9 @@ function cleandist() {
 }
 
 function copy() {
-  return src(["src/sites/**/*", "src/fonts/*"], {
+  return src(["src/assets/**/*", "src/fonts/*"], {
     base: "src",
-  }).pipe(dest("dist"));
+  }).pipe(dest("dist")); // копируем остальные файлы
 }
 
 function startwatch() {

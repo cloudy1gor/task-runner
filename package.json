@@ -4,7 +4,8 @@
   "description": "",
   "main": "gulpfile.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lint": "eslint ./src",
+    "lint:fix": "eslint ./src --fix"
   },
   "repository": {
     "type": "git",
@@ -25,6 +26,12 @@
     "browser-sync": "^2.26.13",
     "core-js": "^3.8.3",
     "del": "^6.0.0",
+    "eslint": "^7.21.0",
+    "eslint-config-airbnb": "^18.2.1",
+    "eslint-config-prettier": "^8.1.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-prettier": "^3.3.1",
+    "eslint-plugin-node": "^11.1.0",
     "fibers": "^5.0.0",
     "gulp": "^4.0.2",
     "gulp-autoprefixer": "^7.0.1",
@@ -33,6 +40,7 @@
     "gulp-clean-css": "^4.3.0",
     "gulp-file-include": "^2.2.2",
     "gulp-group-css-media-queries": "^1.2.2",
+    "gulp-htmlmin": "^5.0.1",
     "gulp-imagemin": "^7.1.0",
     "gulp-notify": "^3.2.0",
     "gulp-plumber": "^1.2.1",
@@ -47,6 +55,7 @@
     "gulp-ttf2eot": "^1.1.2",
     "gulp-ttf2woff": "^1.1.1",
     "gulp-ttftowoff2": "^1.0.1",
+    "prettier": "^2.2.1",
     "imagemin-jpeg-recompress": "^7.0.0",
     "imagemin-pngquant": "^9.0.1",
     "mozjpeg": "^7.0.0",
@@ -59,9 +68,6 @@
   },
   "dependencies": {
     "aos": "^3.0.0-beta.6",
-    "gulp-beautify": "^3.0.0",
-    "gulp-format-html": "^1.2.5",
-    "gulp-htmlmin": "^5.0.1",
     "jquery": "^3.5.1",
     "normalize.css": "^8.0.1"
   }

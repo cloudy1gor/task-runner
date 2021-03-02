@@ -4,10 +4,6 @@
 @import "mixin";
 @import "fonts";
 @import "global";
-@import "pages/404";
+@import "sprite";
 @import "components/header";
 @import "components/footer";
-
-body {
-  background-color: green;
-}
