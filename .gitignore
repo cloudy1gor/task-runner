@@ -12,6 +12,7 @@ dist/
 package.json
 gulpfile.js
 .jshintrc
+.eslintrc.json
 .stylelintrc
 package-lock.json
 desktop.ini
