@@ -49,39 +49,38 @@ function browsersync() {
 }
 
 function html() {
-  return src(["src/templates/pages/*.html", "src/templates/pages/*.pug"])
-    .pipe(
-      plumber({ errorHandler: notify.onError("Error: <%= error.message %>") })
-    )
-    .pipe(
-      fileinclude({
-        prefix: "@@",
-        basepath: "src/",
-      })
-    )
-    .pipe(htmlmin({ collapseWhitespace: true, removeComments: true }))
-    .pipe(
-      pug({
-        pretty: false, // Форматирование
-      })
-    )
-    .pipe(
-      size({
-        gzip: true,
-        pretty: true,
-        showFiles: true,
-        showTotal: true,
-      })
-    )
-    .pipe(dest("dist/"))
-    .pipe(browserSync.reload({ stream: true }));
+  return (
+    // src("src/templates/pages/*.pug")
+    src("src/templates/pages/*.html")
+      .pipe(plumber({ errorHandler: notify.onError("Error: <%= error.message %>") }))
+      .pipe(
+        fileinclude({
+          prefix: "@@",
+          basepath: "src/",
+        })
+      )
+      .pipe(htmlmin({ collapseWhitespace: true, removeComments: true }))
+      // .pipe(
+      //   pug({
+      //     pretty: false, // Форматирование
+      //   })
+      // )
+      .pipe(
+        size({
+          gzip: true,
+          pretty: true,
+          showFiles: true,
+          showTotal: true,
+        })
+      )
+      .pipe(dest("dist/"))
+      .pipe(browserSync.reload({ stream: true }))
+  );
 }
 
 function scripts() {
   return src(jsFiles)
-    .pipe(
-      plumber({ errorHandler: notify.onError("Error: <%= error.message %>") })
-    )
+    .pipe(plumber({ errorHandler: notify.onError("Error: <%= error.message %>") }))
     .pipe(
       webpack({
         mode: "production",
@@ -126,24 +125,14 @@ function scripts() {
 
 function styles() {
   return src("src/scss/style.scss")
-    .pipe(
-      plumber({ errorHandler: notify.onError("Error: <%= error.message %>") })
-    )
+    .pipe(plumber({ errorHandler: notify.onError("Error: <%= error.message %>") }))
     .pipe(sourcemaps.init())
     .pipe(sass({ outputStyle: "expanded" }, { fibers: fibers }))
     .pipe(
       autoprefixer({
         overrideBrowserslist: ["last 8 versions"],
         cascade: true,
-        browsers: [
-          "Android >= 6",
-          "Chrome >= 20",
-          "Firefox >= 24",
-          "Explorer >= 11",
-          "iOS >= 6",
-          "Opera >= 12",
-          "Safari >= 6",
-        ],
+        browsers: ["Android >= 6", "Chrome >= 20", "Firefox >= 24", "Explorer >= 11", "iOS >= 6", "Opera >= 12", "Safari >= 6"],
       })
     ) // Добавляет вендорные префиксы
     .pipe(gcmq()) //Группирует медиа
@@ -172,14 +161,9 @@ function styles() {
 }
 
 function img() {
-  return src([
-    "src/images/**/*.+(jpg|jpeg|png|gif|svg|ico)",
-    "!src/images/svg/**/*.svg",
-  ])
+  return src(["src/images/**/*.+(jpg|jpeg|png|gif|svg|ico)", "!src/images/svg/**/*.svg"])
     .pipe(changed("dist/images")) // не сжимать повторно
-    .pipe(
-      plumber({ errorHandler: notify.onError("Error: <%= error.message %>") })
-    )
+    .pipe(plumber({ errorHandler: notify.onError("Error: <%= error.message %>") }))
     .pipe(
       imagemin(
         {
@@ -260,9 +244,7 @@ function svg2css() {
 function svg2sprite() {
   return src("src/images/svg/icons/*.svg")
     .pipe(changed("dist/images")) // не сжимать повторно
-    .pipe(
-      plumber({ errorHandler: notify.onError("Error: <%= error.message %>") })
-    )
+    .pipe(plumber({ errorHandler: notify.onError("Error: <%= error.message %>") }))
     .pipe(
       svgmin({
         plugins: [
@@ -304,52 +286,40 @@ function svg2sprite() {
 
 function woff() {
   src("src/fonts/*.ttf")
-    .pipe(
-      plumber({ errorHandler: notify.onError("Error: <%= error.message %>") })
-    )
+    .pipe(plumber({ errorHandler: notify.onError("Error: <%= error.message %>") }))
     .pipe(
       changed("dist/fonts", {
         extension: ".woff",
         hasChanged: changed.compareLastModifiedTime,
       })
     )
-    .pipe(
-      plumber({ errorHandler: notify.onError("Error: <%= error.message %>") })
-    )
+    .pipe(plumber({ errorHandler: notify.onError("Error: <%= error.message %>") }))
     .pipe(ttf2woff())
     .pipe(dest("dist/fonts/"));
 
   return src("src/fonts/*.ttf")
-    .pipe(
-      plumber({ errorHandler: notify.onError("Error: <%= error.message %>") })
-    )
+    .pipe(plumber({ errorHandler: notify.onError("Error: <%= error.message %>") }))
     .pipe(
       changed("dist/fonts", {
         extension: ".woff2",
         hasChanged: changed.compareLastModifiedTime,
       })
     )
-    .pipe(
-      plumber({ errorHandler: notify.onError("Error: <%= error.message %>") })
-    )
+    .pipe(plumber({ errorHandler: notify.onError("Error: <%= error.message %>") }))
     .pipe(ttf2woff2())
     .pipe(dest("dist/fonts/"));
 }
 
 function eot() {
   return src("src/fonts/*.ttf")
-    .pipe(
-      plumber({ errorHandler: notify.onError("Error: <%= error.message %>") })
-    )
+    .pipe(plumber({ errorHandler: notify.onError("Error: <%= error.message %>") }))
     .pipe(
       changed("dist/fonts", {
         extension: ".eot",
         hasChanged: changed.compareLastModifiedTime,
       })
     )
-    .pipe(
-      plumber({ errorHandler: notify.onError("Error: <%= error.message %>") })
-    )
+    .pipe(plumber({ errorHandler: notify.onError("Error: <%= error.message %>") }))
     .pipe(ttf2eot())
     .pipe(dest("dist/fonts/")); // формат шрифта для IE8 и ниже
 }
@@ -402,6 +372,4 @@ exports.cleandist = cleandist;
 
 exports.cop = series(copy);
 
-exports.default = series(
-  parallel(html, scripts, styles, images, fonts, browsersync, startwatch)
-);
+exports.default = series(parallel(html, scripts, styles, images, fonts, browsersync, startwatch));
