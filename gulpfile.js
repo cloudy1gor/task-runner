@@ -32,7 +32,6 @@ const ttf2eot = require("gulp-ttf2eot");
 // кастом
 const images = parallel(img, svg2css, svg2sprite);
 const fonts = series(woff, eot);
-const jsFiles = ["src/js/main.js"];
 
 function browsersync() {
   browserSync.init({
@@ -79,7 +78,7 @@ function html() {
 }
 
 function scripts() {
-  return src(jsFiles)
+  return src("src/js/main.js")
     .pipe(plumber({ errorHandler: notify.onError("Error: <%= error.message %>") }))
     .pipe(
       webpack({
@@ -134,7 +133,7 @@ function styles() {
         cascade: true,
         browsers: ["Android >= 6", "Chrome >= 20", "Firefox >= 24", "Explorer >= 11", "iOS >= 6", "Opera >= 12", "Safari >= 6"],
       })
-    ) // Добавляет вендорные префиксы
+    )
     .pipe(gcmq()) //Группирует медиа
     .pipe(
       cleancss({
