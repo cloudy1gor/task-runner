@@ -78,7 +78,10 @@ function styles() {
                 },
             })
         )
-        .pipe(rename("style.min.css"))
+        .pipe(rename({
+            suffix: ".min",
+            extname: ".css"
+          }))
         .pipe(sourcemaps.write("."))
         .pipe(dest(path.build.css))
         .pipe(
