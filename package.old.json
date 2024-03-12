@@ -1,13 +1,22 @@
 {
-  "name": "test-task",
-  "version": "1.0.0",
+  "name": "html-sempai",
+  "version": "2.0.0",
   "description": "",
   "main": "gulpfile.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lint": "eslint ./src",
+    "lint:fix": "eslint ./src --fix"
   },
-  "author": "Ihor Saveliev",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cloudy1gor/html-sempai.git"
+  },
+  "author": "Igor Savelyev",
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cloudy1gor/html-sempai/issues"
+  },
+  "homepage": "https://github.com/cloudy1gor/html-sempai#readme",
   "devDependencies": {
     "@babel/core": "^7.12.10",
     "@babel/preset-env": "^7.12.11",
@@ -21,16 +30,18 @@
     "eslint-config-airbnb": "^18.2.1",
     "eslint-config-prettier": "^8.1.0",
     "eslint-plugin-import": "^2.22.1",
-    "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^3.3.1",
+    "eslint-plugin-node": "^11.1.0",
+    "fibers": "^5.0.0",
     "gulp": "^4.0.2",
     "gulp-autoprefixer": "^7.0.1",
     "gulp-babel": "^8.0.0",
     "gulp-changed": "^4.0.2",
     "gulp-clean-css": "^4.3.0",
-    "gulp-file-include": "^2.3.0",
+    "gulp-file-include": "^2.2.2",
     "gulp-group-css-media-queries": "^1.2.2",
     "gulp-htmlmin": "^5.0.1",
+    "gulp-imagemin": "^7.1.0",
     "gulp-notify": "^3.2.0",
     "gulp-plumber": "^1.2.1",
     "gulp-pug": "^4.0.1",
@@ -38,7 +49,16 @@
     "gulp-sass": "^4.1.0",
     "gulp-size": "^3.0.0",
     "gulp-sourcemaps": "^3.0.0",
+    "gulp-svg-css-pseudo": "^1.0.4",
+    "gulp-svg-sprite": "^1.5.0",
+    "gulp-svgmin": "^3.0.0",
+    "gulp-ttf2eot": "^1.1.2",
+    "gulp-ttf2woff": "^1.1.1",
+    "gulp-ttftowoff2": "^1.0.1",
     "prettier": "^2.2.1",
+    "imagemin-jpeg-recompress": "^7.0.0",
+    "imagemin-pngquant": "^9.0.1",
+    "mozjpeg": "^7.0.0",
     "stylelint": "^13.7.2",
     "stylelint-declaration-block-no-ignored-properties": "^2.3.0",
     "stylelint-order": "^4.1.0",
@@ -47,9 +67,8 @@
     "webpack-stream": "^6.1.2"
   },
   "dependencies": {
-    "bootstrap": "^5.3.3",
-    "jquery": "^3.7.1",
-    "normalize-css": "^2.3.1",
-    "popper.js": "^1.16.1"
+    "aos": "^3.0.0-beta.6",
+    "jquery": "^3.5.1",
+    "normalize.css": "^8.0.1"
   }
 }
