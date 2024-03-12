@@ -7,7 +7,7 @@ const config = {
 		main: path + "main.js",
 	},
     output: {
-        filename: "[name].js",
+        filename: "[name].min.js",
     },
     module: {
         rules: [

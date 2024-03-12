@@ -1,5 +1,6 @@
 // import $ from "jquery";
+import component from "./componetnts/component";
 
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("scripts");
+	component();
 });

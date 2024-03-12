@@ -12,14 +12,12 @@ const sourcemaps = require("gulp-sourcemaps");
 const gcmq = require("gulp-group-css-media-queries");
 const size = require("gulp-size");
 
-
 // Paths
 const source = "src/";
-const build = "dist/";
+const build = "./";
 
 const path = {
 	build: {
-		html: build,
 		css: build + "assets/css",
 		js: build + "assets/js",
 		img: build + "assets/img",
@@ -27,12 +25,18 @@ const path = {
 		fonts: build + "assets/fonts",
 	},
 	src: {
-		html: source + "teamplates/pages/*.html",
 		css: source + "assets/scss/style.scss",
 		js: source + "assets/js/main.js",
 		img: source + "assets/images/*.{jpg,jpeg,png}",
 		svg: source + "assets/images/svg/*.svg",
 		fonts: source + "assets/fonts/**/*",
+	},
+    watch: {
+		css: source + "assets/scss/**/*.scss",
+		js: source + "assets/js/**/*.js",
+		img: [source + "assets/images/**/*.{jpg,png,jpeg,svg,gif,webp}", "!**/favicon.*"],
+		svg: [source + "assets/images/svg/*.svg", source + "img/**/favicon.*"],
+		fonts: source + "assets/fonts/**/*.*",
 	},
 	clean: build,
 }
@@ -46,10 +50,7 @@ function scripts() {
         .pipe(dest(path.build.js))
         .pipe(
             size({
-                gzip: true,
-                pretty: true,
                 showFiles: true,
-                showTotal: true,
             })
         )
 }
@@ -67,16 +68,6 @@ function styles() {
             })
         )
         .pipe(gcmq())
-		.pipe(rename("style.css"))
-        .pipe(dest(path.build.css))
-        .pipe(
-            size({
-                gzip: true,
-                pretty: true,
-                showFiles: true,
-                showTotal: true,
-            })
-        )
         .pipe(
             cleancss({
                 level: {
@@ -92,10 +83,7 @@ function styles() {
         .pipe(dest(path.build.css))
         .pipe(
             size({
-                gzip: true,
-                pretty: true,
                 showFiles: true,
-                showTotal: true,
             })
         )
 }
@@ -110,11 +98,11 @@ function fonts() {
         .pipe(dest(path.build.fonts));
 }
 
-function startwatch() {
-    watch("src/sass/**/*.scss", styles);
-    watch("src/js/**/*.js", scripts);
-	watch("src/images/**/*.*", images);
-    watch("src/fonts/**/*.*", fonts);
+function startWatch() {
+    watch(path.watch.css, styles);
+    watch(path.watch.js, scripts);
+	watch(path.watch.img, images);
+    watch(path.watch.fonts, fonts);
 }
 
 exports.scripts = scripts;
@@ -122,4 +110,4 @@ exports.styles = styles;
 exports.images = images;
 exports.fons = fonts;
 
-exports.default = series(parallel(scripts, styles, images, fonts, startwatch));
+exports.default = series(parallel(scripts, styles, images, fonts, startWatch));
