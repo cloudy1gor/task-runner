@@ -13,7 +13,8 @@
   "rules": {
     "indent": ["error", 4, { "SwitchCase": 1 }],
     "no-mixed-spaces-and-tabs": ["error", "smart-tabs"],
-    // "linebreak-style": ["error", "windows"],
+    // "linebreak-style": ["error", "unix"],
+    "linebreak-style": ["error", "windows"],
     "quotes": ["error", "double"],
     "semi": ["error", "always"],
     "prefer-destructuring": "off"
