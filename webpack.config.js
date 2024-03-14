@@ -1,3 +1,4 @@
+// import TerserPlugin from "terser-webpack-plugin";
 
 const path = "./src/assets/js/";
 
@@ -31,6 +32,12 @@ const config = {
             },
         ],
     },
+    // optimization: {
+    //     minimize: true,
+    //     minimizer: [
+    //       new TerserPlugin(),
+    //     ],
+    // },
 };
 
 module.exports = config;

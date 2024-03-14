@@ -47,6 +47,7 @@ function scripts() {
         .pipe(
             webpack(require("./webpack.config.js"))
         )
+        .pipe(plumber.stop())
         .pipe(dest(path.build.js))
         .pipe(
             size({
@@ -82,6 +83,7 @@ function styles() {
             suffix: ".min",
             extname: ".css"
           }))
+        .pipe(plumber.stop())
         .pipe(sourcemaps.write("."))
         .pipe(dest(path.build.css))
         .pipe(
